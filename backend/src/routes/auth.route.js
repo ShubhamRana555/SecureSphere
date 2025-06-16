@@ -1,3 +1,4 @@
+
 import { Router } from 'express';
 import { forgotPassword, loginUser, logoutUser, refreshAccessToken, registerUser, resendVerificationEmail, resetPassword, verifyEmail } from '../controllers/auth.controller.js';
 import { isLoggedIn, verifyRefreshToken } from '../middlewares/auth.middleware.js';
@@ -19,6 +20,3 @@ router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:token', resetPassword);
 
 router.get('/refresh-token', verifyRefreshToken, refreshAccessToken);
-
-
-export default router;
