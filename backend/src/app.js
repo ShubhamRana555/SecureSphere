@@ -1,26 +1,24 @@
 import express from "express";
-import cookieParser from "cookie-parser";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: process.env.BASE_URL || "http://localhost:3000",
-    credentials: true,
+app.use(cors({
+    origin: process.env.BASE_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
 }))
 
-app.get('/', (req, res) => {
-  res.send('Hello, World!');
-});
+// router imports
+import authRouter from "./routes/auth.route.js";
+import userRouter from "./routes/user.route.js";
 
-app.get('/home', (req, res) => {
-  res.send('Welcome to the Home Page!');
-});
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/users", userRouter);
 
 export default app;
