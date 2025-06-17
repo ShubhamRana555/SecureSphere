@@ -3,6 +3,7 @@ import asyncHandler from '../utils/async-handler.js';
 import { User } from '../models/user.model.js';
 import ApiError from '../utils/api-error.js';
 
+//  TODO: MAKE USE OF ACCESS TOKEN INSTEAD OF REFRESH TOKEN, WHICH WILL COME FROM FRONTEND AS A HEADER
 export const isLoggedIn = asyncHandler(async (req, res, next) => {
     const token = req.cookies?.refreshToken || req.header('Authorization')?.replace('Bearer ', '');
     if (!token) {
