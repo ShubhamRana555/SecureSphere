@@ -5,7 +5,7 @@ import asyncHandler from "../utils/async-handler.js";
 
 export const getMyProfile = asyncHandler(async (req, res) => {
 
-    const user = await User.findById(req.user._id).select("-password -forgotPasswordToken -forgotPasswordExpiry refreshToken -emailVerificationToken -emailVerificationTokenExpiry");
+    const user = await User.findById(req.user._id).select("-password -forgotPasswordToken -forgotPasswordTokenExpiry -refreshToken -emailVerificationToken -emailVerificationTokenExpiry");
 
     if(!user){
         return res.status(404).json(
@@ -25,7 +25,7 @@ export const getMyProfile = asyncHandler(async (req, res) => {
 
 
 export const updateMyProfile = asyncHandler(async (req, res) => {
-    
+
 
 
 });

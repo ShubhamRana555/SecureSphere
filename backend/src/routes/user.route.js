@@ -11,7 +11,7 @@ router.put('/me/update', isLoggedIn, updateMyProfile);
 
 router.put('/me/update-password', isLoggedIn, updatePassword);
 
-router.delete('/me/deactivate', isLoggedIn, deactivateAccount);
+router.delete('/me/deactivate-account', isLoggedIn, deactivateAccount);
 
 router.delete('/me/delete-account', isLoggedIn, deleteAccount);
 
