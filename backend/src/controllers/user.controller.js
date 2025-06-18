@@ -2,6 +2,9 @@ import { User } from "../models/user.model.js";
 import ApiError from "../utils/api-error.js";
 import ApiResponse from "../utils/api-response.js";
 import asyncHandler from "../utils/async-handler.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import cloudinary from "cloudinary";
+import fs from "fs";
 
 export const getMyProfile = asyncHandler(async (req, res) => {
 
@@ -25,8 +28,65 @@ export const getMyProfile = asyncHandler(async (req, res) => {
 
 
 export const updateMyProfile = asyncHandler(async (req, res) => {
+// check if user exists
+// if yes, take input fullName, username, avatar 
+// handle avatar upload if provided
+// update user profile with provided data using findByIdAndUpdate query
+// return updated user profile
 
+    const user = await User.findById(req.user._id).select("-password -forgotPasswordToken -forgotPasswordTokenExpiry -refreshToken -emailVerificationToken -emailVerificationTokenExpiry");
 
+    if(!user){
+        return res.status(404).json(
+            new ApiError(404, "User not found")
+        );
+    }
+
+    const { fullname, username} = req.body;
+    const updates = {};
+
+    if(username) updates.username = username;
+    if(fullname) updates.fullname = fullname;
+
+    if (req.file) {
+  console.log("✅ File received:", req.file.path);
+} else {
+  console.log("❌ No file received");
+}
+
+    // Handle avatar upload
+    if(req.file){
+        // Delete old avatar if it exists
+
+        if (user.avatar?.public_id) {
+            try {
+            await cloudinary.uploader.destroy(user.avatar.public_id);
+            } catch (error) {
+            console.error("Failed to delete old avatar from Cloudinary", error.message);
+            }
+        }
+
+        // Upload new avatar
+        const cloudinaryResponse = await uploadOnCloudinary(req.file.path);
+        updates.avatar = {
+            url: cloudinaryResponse.secure_url,
+            public_id: cloudinaryResponse.public_id,
+        };
+
+        // Delete the local file
+        fs.unlinkSync(req.file.path);
+    }
+
+    // Apply updates to user profile
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, updates, {
+        new: true,
+        runValidators: true,
+        select: "-password -forgotPasswordToken -forgotPasswordTokenExpiry -refreshToken -emailVerificationToken -emailVerificationTokenExpiry"
+    });
+
+    return res.status(200).json(
+        new ApiResponse(200, updatedUser, "User profile updated successfully")
+    );
 
 });
 

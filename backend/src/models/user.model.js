@@ -7,10 +7,12 @@ const userSchema = new Schema(
   {
     avatar: {
       type: {
+        public_id: String,
         url: String,
         localPath: String,
       },
       default: {
+        public_id: "",  // to destroy the avatar in cloudinary
         url: "https://placehold.co/600x400",
         localPath: "",
       },

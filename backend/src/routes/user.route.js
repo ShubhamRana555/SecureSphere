@@ -1,13 +1,15 @@
 import { Router } from "express";
 import { isLoggedIn } from "../middlewares/auth.middleware.js";
 import { deactivateAccount, deleteAccount, getMyProfile, updateMyProfile, updatePassword } from "../controllers/user.controller.js";
+import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
 
 router.get('/me', isLoggedIn, getMyProfile);
 
-router.put('/me/update', isLoggedIn, updateMyProfile);
+router.put('/me/update', isLoggedIn, upload.single("avatar"), updateMyProfile);
+// The string "avatar" is the field name in your form-data (or frontend input) through which the image file is uploaded.
 
 router.put('/me/update-password', isLoggedIn, updatePassword);
 
