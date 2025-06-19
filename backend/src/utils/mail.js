@@ -45,10 +45,10 @@ export const emailVerificationMailGenContent = (username, verificationUrl) => {
     body: {
       name: username,
       intro:
-        "Welcome to Crew Board App! We're very excited to have you on board.",
+        "Welcome to SecureSphere App! We're very excited to have you on board.",
       action: {
         instructions:
-          "To get started with Crew Board App, please click here:",
+          "To get started with SecureSphere App, please click here:",
         button: {
           color: "#22BC66", // Optional action button color
           text: "Verify your Email",
