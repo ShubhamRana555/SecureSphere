@@ -5,7 +5,7 @@ function App() {
 
   return (
     <>
-      <h1>Secure sphere appp</h1> 
+      <h1>Secure sphere app</h1> 
     </>
   )
 }
