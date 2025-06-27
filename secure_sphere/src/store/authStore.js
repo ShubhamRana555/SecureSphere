@@ -7,7 +7,7 @@ import { persist } from "zustand/middleware";
 axios.defaults.baseURL = "http://localhost:3000/api/v1";
 axios.defaults.withCredentials = true;
 
-const useAuthStore = create(
+export const useAuthStore = create(
     persist(
         (set, get) => ({
             user: null,
