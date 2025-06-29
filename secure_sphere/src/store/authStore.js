@@ -6,6 +6,7 @@ import { persist } from "zustand/middleware";
 axios.defaults.baseURL = "http://localhost:3000/api/v1";
 axios.defaults.withCredentials = true;
 
+//persist -> Adds localStorage.setItem("auth", JSON.stringify(store)) when the state updates. It basically helps to persist the state across page reloads otherwise the state will be lost on page reloads and user will be logged out.
 export const useAuthStore = create(
     persist(
         (set, get) => ({
