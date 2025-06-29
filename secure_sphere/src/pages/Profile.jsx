@@ -1,4 +1,5 @@
 import { useAuthStore } from "../store/authStore.js";
+import { Link } from "react-router-dom";
 
 export default function Profile() {
   const { user, logout, loading} = useAuthStore();

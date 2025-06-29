@@ -55,7 +55,7 @@ export const useAuthStore = create(
 
             fetchProfile: async () => {
                 try {
-                    const response = await axios.get("/user/me", {
+                    const response = await axios.get("/users/me", {
                         headers: {
                             Authorization: `Bearer ${get().token}`
                         }
