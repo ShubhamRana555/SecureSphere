@@ -5,25 +5,28 @@ import ApiError from '../utils/api-error.js';
 
 //  TODO: MAKE USE OF ACCESS TOKEN INSTEAD OF REFRESH TOKEN, WHICH WILL COME FROM FRONTEND AS A HEADER
 export const isLoggedIn = asyncHandler(async (req, res, next) => {
-    const token = req.cookies?.refreshToken || req.header('Authorization')?.replace('Bearer ', '');
-    if (!token) {
-        return res.status(401).json({
-            status: 'fail',
-            message: 'You are not logged in! Please log in to get access.',
-        });
-    }
+    const authHeader = req.header('Authorization');
+  const token = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
 
-    const decoded = await jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+  if (!token) {
+    return res.status(401).json(
+      new ApiError(401, 'You are not logged in! Please log in to get access.')
+    );
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
     const user = await User.findById(decoded._id);
     if (!user) {
-        return res.status(401).json(
-            new ApiError(401, 'The user belonging to this token does no longer exist.')
-        );
+      return res.status(401).json(new ApiError(401, 'User no longer exists.'));
     }
 
-    req.user = user;    
+    req.user = user;
     next();
+  } catch (err) {
+    return res.status(401).json(new ApiError(401, 'Invalid or expired token.'));
+  }
 
 })
 
