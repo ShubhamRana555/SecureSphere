@@ -14,10 +14,10 @@ export const registerUser = asyncHandler(async (req, res) => {
   // send verification email using nodemailer
   // send response
 
-    const {email, password, username, role} = req.body;
-    if(!email || !password || !username || !role) {
+    const {email, password, username, role, fullname} = req.body;
+    if(!email || !password || !username || !role || !fullname) {
         return res.status(400).json(
-            new ApiError(400, "Email is required")
+            new ApiError(400, "Every field is required")
         ) 
     }
 
@@ -28,7 +28,7 @@ export const registerUser = asyncHandler(async (req, res) => {
         ) 
     }
 
-    const user = await User.create({email, username, password, role});
+    const user = await User.create({email, username, password, role, fullname});
 
     const { hashedToken, unHashedToken, tokenExpiry } = user.generateTemporaryToken();
 
