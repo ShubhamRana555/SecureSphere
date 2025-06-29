@@ -47,8 +47,24 @@ export const registerUser = asyncHandler(async (req, res) => {
         mailGenContent: emailVerificationMailGenContent(user.username, verificationUrl), 
     });
 
+
+    // Generate access and refresh tokens
+  const accessToken = user.generateAccessToken();
+  const refreshToken = user.generateRefreshToken();
+
+  user.refreshToken = refreshToken;
+  await user.save({ validateBeforeSave: false });
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  });
+
+
     return res.status(201).json(
-        new ApiResponse(201, 'User registered successfully. Please check your email to verify your account.')
+        new ApiResponse(201, {accessToken}, 'User registered successfully. Please check your email to verify your account.')
     )
 
 })
