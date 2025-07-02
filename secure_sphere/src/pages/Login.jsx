@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input.jsx";
 import { Button } from "@/components/ui/button.jsx";
 import { Label } from "@/components/ui/label.jsx";
 import { Card, CardContent, CardHeader } from "@/components/ui/card.jsx";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const { login, loading, error } = useAuthStore();
@@ -34,6 +35,13 @@ export default function Login() {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Logging in..." : "Login"}
             </Button>
+
+            <p className="text-center text-sm mt-2">
+              Don&apos;t have an account?{" "}
+              <Link to="/register" className="text-blue-600 hover:underline">
+                Register here
+              </Link>
+            </p>
           </form>
         </CardContent>
       </Card>

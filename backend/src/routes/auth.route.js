@@ -13,7 +13,7 @@ router.post('/verify-email', resendVerificationEmail);
 
 router.post('/login', loginUser);
 
-router.get('/logout', isLoggedIn, logoutUser);
+router.post('/logout', isLoggedIn, logoutUser);
 
 router.post('/forgot-password', forgotPassword);
 

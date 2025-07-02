@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select.jsx";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 export default function Register() {
   const { register: registerUser, loading, error } = useAuthStore();
@@ -22,10 +23,8 @@ export default function Register() {
     watch,
   } = useForm();
 
-  // Watch selected role
   const role = watch("role");
 
-  // Register the custom role field manually
   useEffect(() => {
     register("role", { required: true });
   }, [register]);
@@ -78,6 +77,13 @@ export default function Register() {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Registering..." : "Register"}
             </Button>
+
+            <p className="text-center text-sm mt-2">
+              Already have an account?{" "}
+              <Link to="/login" className="text-blue-600 hover:underline">
+                Login here
+              </Link>
+            </p>
           </form>
         </CardContent>
       </Card>

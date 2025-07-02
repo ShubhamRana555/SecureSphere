@@ -66,3 +66,22 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+body {
+  @apply bg-[#2f2f35] text-white;
+}
+
+/* index.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+}
