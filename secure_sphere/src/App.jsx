@@ -18,6 +18,7 @@ import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users";
 import MyTasks from "./pages/MyTasks";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ReactivateAccount from "./pages/ReactivateAccount";
 
 function App() {
   const { token } = useAuthStore();
@@ -67,6 +68,7 @@ function App() {
         />
         <Route path="/update-password" element={<UpdatePassword />} />
         <Route path="/deactivate-account" element={<DeactivateAccount />} />
+        <Route path="/reactivate-account" element={<ReactivateAccount />} />
         <Route path="/delete-account" element={<DeleteAccount />} />
       </Routes>
     </Router>

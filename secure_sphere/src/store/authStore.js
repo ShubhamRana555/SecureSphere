@@ -28,8 +28,10 @@ export const useAuthStore = create(
 
           // Fetch user data after login
           await get().fetchProfile();
+          return true;
         } catch (err) {
           set({ error: err.response?.data?.message || "Login failed" });
+          return false;
         } finally {
           set({ loading: false });
         }
@@ -76,19 +78,18 @@ export const useAuthStore = create(
               },
             }
           );
-
+        } catch (err) {
+          console.warn("Logout failed but continuing cleanup:", err.message);
+          // Don't return here — continue cleanup
+        } finally {
+          // Clear everything regardless of API success
           set({
             user: null,
             token: null,
             error: null,
           });
-
-          // ✅ Zustand persist helper: clear localStorage version too
-          // Manually clear persisted data from Zustand (safe way)
-          localStorage.removeItem("auth"); // optional if below line is added
-          sessionStorage.removeItem("auth"); // just in case
-        } catch (err) {
-          set({ error: err.response?.data?.message || "Logout failed" });
+          localStorage.removeItem("auth");
+          sessionStorage.removeItem("auth");
         }
       },
     }),

@@ -1,13 +1,15 @@
-import React from "react";
+// src/components/ProtectedRoute.jsx
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
-import { Navigate } from "react-router-dom";
 
-// parameters -> (role, component to render)
 export default function ProtectedRoute({ allowedRoles, children }) {
   const { user } = useAuthStore();
+  const location = useLocation();
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/login" replace />;
+
+  if (!user.isActive && location.pathname !== "/reactivate-account") {
+    return <Navigate to="/reactivate-account" replace />;
   }
 
   if (!allowedRoles.includes(user.role)) {

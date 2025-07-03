@@ -153,12 +153,6 @@ export const deactivateAccount = asyncHandler(async (req, res) => {
     user.isActive = false;
     await user.save();
 
-    res.clearCookie("refreshToken", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "Strict",
-    });
-
     return res.status(200).json(
         new ApiResponse(
             200,
@@ -168,6 +162,23 @@ export const deactivateAccount = asyncHandler(async (req, res) => {
     );
 
 });
+
+
+export const reactivateAccount = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (!user) throw new ApiError(404, "User not found");
+
+  if (user.isActive) {
+    return res.status(400).json(new ApiError(400, "Account is already active"));
+  }
+
+  user.isActive = true;
+  await user.save();
+
+  res.status(200).json(new ApiResponse(200, null, "Account reactivated"));
+});
+
 
 
 export const deleteAccount = asyncHandler(async (req, res) => {

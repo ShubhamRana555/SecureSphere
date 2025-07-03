@@ -22,6 +22,10 @@ export const isLoggedIn = asyncHandler(async (req, res, next) => {
       return res.status(401).json(new ApiError(401, 'User no longer exists.'));
     }
 
+    if (!user.isActive && !req.originalUrl.includes("/reactivate-account") && !req.originalUrl.includes("/users/me")) {
+      throw new ApiError(403, "Account is deactivated. Reactivate your account to continue.");
+    }
+
     req.user = user;
     next();
   } catch (err) {

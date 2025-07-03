@@ -1,83 +1,65 @@
-import { useForm } from "react-hook-form";
+// src/pages/DeleteAccount.jsx
 import { useAuthStore } from "../store/authStore.js";
-import { Input } from "@/components/ui/input.jsx";
-import { Button } from "@/components/ui/button.jsx";
-import { Label } from "@/components/ui/label.jsx";
-import { Card, CardContent, CardHeader } from "@/components/ui/card.jsx";
-
-import axios from "axios";
+import { useUserStore } from "../store/userStore.js";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function DeleteAccount() {
-  const { logout, token, loading } = useAuthStore();
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm();
+  const { token, logout } = useAuthStore();
+  const { deleteAccount, loading, error, message, clearMessages } = useUserStore();
+  const { register, handleSubmit } = useForm();
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    try {
-      await axios.delete("/users/delete", {
-        data,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+    await deleteAccount(token, data.password, data.confirm);
+    if (!error) {
       await logout();
-    } catch (err) {
-      alert(err.response?.data?.message || "Failed to delete account");
-    } finally {
-      reset();
+      navigate("/login");
     }
   };
 
+  useEffect(() => {
+    return () => {
+      clearMessages();
+    };
+  }, []);
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-muted px-4">
-      <Card className="w-full max-w-md bg-background text-foreground">
-        <CardHeader className="text-center text-xl font-semibold">
-          Delete Account
-        </CardHeader>
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center text-xl font-semibold text-white">Delete Account</CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <p className="text-sm text-red-500 text-center">
-              Warning: This action is irreversible!
+              Warning: This action is irreversible. Your data will be permanently deleted.
             </p>
 
+            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+            {message && <p className="text-green-500 text-sm text-center">{message}</p>}
+
             <div>
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-white">Confirm Password</Label>
               <Input
                 type="password"
                 {...register("password", { required: true })}
-                placeholder="Your Password"
+                placeholder="Enter your password"
               />
-              {errors.password && (
-                <p className="text-red-500 text-sm">Password is required</p>
-              )}
             </div>
 
             <div>
-              <Label htmlFor="confirm">Type "DELETE" to confirm</Label>
+              <Label htmlFor="confirm" className="text-white">Type "DELETE" to confirm</Label>
               <Input
-                {...register("confirm", {
-                  required: true,
-                  validate: (val) => val === "DELETE",
-                })}
-                placeholder='Type DELETE'
+                {...register("confirm", { required: true })}
+                placeholder='Type "DELETE"'
               />
-              {errors.confirm && (
-                <p className="text-red-500 text-sm">
-                  You must type "DELETE" to confirm
-                </p>
-              )}
             </div>
 
-            <Button
-              type="submit"
-              className="w-full bg-red-600 hover:bg-red-700"
-              disabled={loading}
-            >
+            <Button type="submit" className="w-full bg-red-600 hover:bg-red-700" disabled={loading}>
               {loading ? "Deleting..." : "Delete Account"}
             </Button>
           </form>

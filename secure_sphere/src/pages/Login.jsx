@@ -5,13 +5,26 @@ import { Button } from "@/components/ui/button.jsx";
 import { Label } from "@/components/ui/label.jsx";
 import { Card, CardContent, CardHeader } from "@/components/ui/card.jsx";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const { login, loading, error } = useAuthStore();
   const { register, handleSubmit } = useForm();
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    await login(data.email, data.password);
+    const success = await login(data.email, data.password);
+
+    if(success){
+      const currentUser = useAuthStore.getState().user;
+      if(currentUser && !currentUser.isActive){
+        navigate("/reactivate-account");
+      }
+      else{
+        navigate("/dashboard");
+      }
+    }
+
   };
 
   return (

@@ -1,3 +1,4 @@
+// src/pages/ReactivateAccount.jsx
 import { useAuthStore } from "../store/authStore";
 import { useUserStore } from "../store/userStore";
 import { Button } from "@/components/ui/button";
@@ -5,37 +6,37 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
-export default function DeactivateAccount() {
-  const { token, fetchProfile } = useAuthStore();
-  const { deactivateAccount, loading, error, message, clearMessages } = useUserStore();
+export default function ReactivateAccount() {
+  const { user, fetchProfile, token } = useAuthStore();
+  const { reactivateAccount, loading, error, message, clearMessages } = useUserStore();
   const navigate = useNavigate();
 
-  const handleDeactivate = async () => {
-    await deactivateAccount(token);
-    await fetchProfile(); // Update user state
-    navigate("/reactivate-account");
+  const handleReactivate = async () => {
+    await reactivateAccount(token);
+    await fetchProfile(); // Update authStore user state
+    navigate("/dashboard");
   };
 
   useEffect(() => {
     return () => {
-      clearMessages();
+      clearMessages(); // Clear old error/message when unmounting
     };
   }, []);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-muted px-4">
       <Card className="w-full max-w-md">
-        <CardHeader className="text-center text-xl font-semibold">Deactivate Account</CardHeader>
+        <CardHeader className="text-center text-xl font-semibold">Reactivate Account</CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-center text-yellow-600">
-            Are you sure you want to deactivate your account? You can always reactivate later.
+          <p className="text-sm text-center text-red-500">
+            Your account is deactivated. You must reactivate it to continue.
           </p>
 
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
           {message && <p className="text-green-500 text-sm text-center">{message}</p>}
 
-          <Button onClick={handleDeactivate} className="w-full bg-red-600 hover:bg-red-700" disabled={loading}>
-            {loading ? "Deactivating..." : "Deactivate Account"}
+          <Button onClick={handleReactivate} className="w-full" disabled={loading}>
+            {loading ? "Reactivating..." : "Reactivate Account"}
           </Button>
         </CardContent>
       </Card>
