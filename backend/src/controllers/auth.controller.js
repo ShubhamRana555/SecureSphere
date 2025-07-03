@@ -175,6 +175,14 @@ export const loginUser = asyncHandler(async (req, res) => {
         )
     }
 
+    // Check if the user account is active
+    if (!user.active) {
+        return res.status(403).json(
+            new ApiError(403, "Your account is deactivated. Please contact support.")
+        );
+    }
+
+
     // generate JWT token
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();

@@ -153,6 +153,12 @@ export const deactivateAccount = asyncHandler(async (req, res) => {
     user.isActive = false;
     await user.save();
 
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "Strict",
+    });
+
     return res.status(200).json(
         new ApiResponse(
             200,
@@ -165,29 +171,38 @@ export const deactivateAccount = asyncHandler(async (req, res) => {
 
 
 export const deleteAccount = asyncHandler(async (req, res) => {
+  const { confirm, password } = req.body;
 
-    const {confirm} = req.body;
-    if(!confirm || confirm !== "DELETE"){
-        return res.status(400).json(
-            new ApiError(400, "Please confirm account deletion by providing 'DELETE' in the request body")
-        );
-    }
-
-    await User.findByIdAndDelete(req.user._id);
-
-    res.clearCookie("refreshToken", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "Strict"
-    })
-
-    return res.status(200).json(
-        new ApiResponse(
-            200,
-            null,
-            "Account deleted successfully"
-        )
+  if (!confirm || confirm !== "DELETE") {
+    return res.status(400).json(
+      new ApiError(400, "Please confirm account deletion by typing 'DELETE'")
     );
+  }
 
+  if(!password) {
+    return res.status(400).json(
+      new ApiError(400, "Please provide your password to confirm account deletion")
+    );
+  }
+
+  const user = await User.findById(req.user._id).select("+password");
+
+  const isMatch = await user.comparePassword(password);
+  if (!isMatch) {
+    return res.status(401).json(new ApiError(401, "Invalid password"));
+  }
+
+  await User.findByIdAndDelete(user._id);
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "Strict"
+  });
+
+  return res.status(200).json(
+    new ApiResponse(200, null, "Account deleted successfully")
+  );
 });
+
 
