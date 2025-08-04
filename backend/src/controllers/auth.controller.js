@@ -86,13 +86,23 @@ export const verifyEmail = asyncHandler(async (req, res) => {
 
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
+  // Check for user with this token (verified or unverified)
   const user = await User.findOne({
     emailVerificationToken: hashedToken,
-    emailVerificationTokenExpiry: { $gt: Date.now() },
   });
 
   if (!user) {
     return res.status(400).json(new ApiError(400, "Invalid or expired token"));
+  }
+
+  // Check if email is already verified
+  if (user.isEmailVerified) {
+    return res.status(200).json(new ApiResponse(200, user, "Email is already verified"));
+  }
+
+  // Check if token is expired
+  if (user.emailVerificationTokenExpiry < Date.now()) {
+    return res.status(400).json(new ApiError(400, "Token has expired"));
   }
 
   user.isEmailVerified = true;
@@ -102,9 +112,9 @@ export const verifyEmail = asyncHandler(async (req, res) => {
   await user.save();
   console.log("User email verified successfully", user.email);
 
-return res
-  .status(200)
-  .json(new ApiResponse(200, user, "Email verified successfully"));
+  // Redirect to frontend with success parameter
+  const frontendUrl = `${process.env.FRONTEND_BASE_URL || 'http://localhost:5173'}/verify-email/${token}?verified=true`;
+  return res.redirect(frontendUrl);
 
 });
 
