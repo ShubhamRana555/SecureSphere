@@ -6,7 +6,7 @@ export const sendMail = async (options) => {
   var mailGenerator = new Mailgen({
     theme: "default",
     product: {
-      name: "CrewBoard App",
+      name: "SecureSphere App",
       link: "https://mailgen.js/",
     },
   });

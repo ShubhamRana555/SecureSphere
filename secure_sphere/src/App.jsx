@@ -72,6 +72,7 @@ function App() {
         <Route path="/deactivate-account" element={<DeactivateAccount />} />
         <Route path="/reactivate-account" element={<ReactivateAccount />} />
         <Route path="/delete-account" element={<DeleteAccount />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />

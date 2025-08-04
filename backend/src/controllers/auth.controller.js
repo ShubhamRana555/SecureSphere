@@ -92,17 +92,20 @@ export const verifyEmail = asyncHandler(async (req, res) => {
   });
 
   if (!user) {
-    return res.status(400).json(new ApiError(400, "Invalid or expired token"));
+    const frontendUrl = `${process.env.FRONTEND_BASE_URL || 'http://localhost:5173'}/verify-email?error=invalid`;
+    return res.redirect(frontendUrl);
   }
 
   // Check if email is already verified
   if (user.isEmailVerified) {
-    return res.status(200).json(new ApiResponse(200, user, "Email is already verified"));
+    const frontendUrl = `${process.env.FRONTEND_BASE_URL || 'http://localhost:5173'}/verify-email?verified=true`;
+    return res.redirect(frontendUrl);
   }
 
   // Check if token is expired
   if (user.emailVerificationTokenExpiry < Date.now()) {
-    return res.status(400).json(new ApiError(400, "Token has expired"));
+    const frontendUrl = `${process.env.FRONTEND_BASE_URL || 'http://localhost:5173'}/verify-email?error=expired`;
+    return res.redirect(frontendUrl);
   }
 
   user.isEmailVerified = true;

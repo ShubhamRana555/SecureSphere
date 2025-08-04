@@ -19,7 +19,7 @@ export default function DeleteAccount() {
     await deleteAccount(token, data.password, data.confirm);
     if (!error) {
       await logout();
-      navigate("/login");
+      navigate("/register");
     }
   };
 
